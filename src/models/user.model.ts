@@ -15,6 +15,11 @@ class UserModel {
     return db.query(sql, [id]);
   }
 
+  async getUserByEmail(email: string): Promise<any> {
+    const sql = "SELECT * FROM users WHERE email = ?";
+    return db.query(sql, [email]);
+  }
+
   async updateUser(id: number, name: string, email: string): Promise<any> {
     const sql = "UPDATE users SET name = ?, email = ? WHERE id = ?";
     return db.query(sql, [name, email, id]);
