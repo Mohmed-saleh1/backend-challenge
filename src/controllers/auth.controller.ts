@@ -10,12 +10,12 @@ class AuthController {
 
   async login(req: Request, res: Response): Promise<void> {
     const { email, password } = req.body;
-    const token = await AuthService.login(email, password);
-    if (!token) {
+    const result = await AuthService.login(email, password);
+    if (!result) {
       res.status(401).json({ message: "Invalid credentials" });
       return;
     }
-    res.json({ token });
+    res.json(result);
   }
 }
 

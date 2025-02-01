@@ -1,4 +1,6 @@
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 
 class JWT {
   private secret: string = process.env.JWT_SECRET || "secret";
@@ -8,7 +10,16 @@ class JWT {
   }
 
   verifyToken(token: string): any {
-    return jwt.verify(token, this.secret);
+    try {
+      console.log("the secreate is ", this.secret);
+
+      return jwt.verify(token, this.secret);
+    } catch (err) {
+      if (err instanceof jwt.TokenExpiredError) {
+        throw new Error("Token has expired.");
+      }
+      throw new Error("Invalid token.");
+    }
   }
 }
 

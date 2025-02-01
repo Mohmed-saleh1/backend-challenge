@@ -21,11 +21,6 @@ class UserController {
     res.json({ message: "User deleted successfully" });
   }
 
-  async getAllUsers(req: Request, res: Response): Promise<void> {
-    const users = await UserService.getAllUsers();
-    res.json(users);
-  }
-
   async getTopUsers(req: Request, res: Response): Promise<void> {
     const topUsers = await UserService.getTopUsersByLoginFrequency();
     res.json(topUsers);
@@ -47,6 +42,23 @@ class UserController {
   async getTotalVerifiedUsers(req: Request, res: Response): Promise<void> {
     const totalVerifiedUsers = await UserService.getTotalVerifiedUsers();
     res.json({ totalVerifiedUsers });
+  }
+
+  async verifyUser(req: Request, res: Response) {
+    const { email } = req.body;
+    const user = await UserService.verifyUser(email);
+    res.json(user);
+  }
+  async getPaginatedUsers(req: Request, res: Response): Promise<void> {
+    const page = parseInt(req.query.page as string) || 1; // Default page 1
+    const limit = parseInt(req.query.limit as string) || 10; // Default limit 10
+
+    try {
+      const result = await UserService.getPaginatedUsers(page, limit);
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ message: "Error retrieving users", error });
+    }
   }
 }
 

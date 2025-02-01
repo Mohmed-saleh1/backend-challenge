@@ -14,23 +14,43 @@ class UserService {
     return UserModel.deleteUser(id);
   }
 
-  async getAllUsers(): Promise<any> {
-    return UserModel.getAllUsers();
+  async getPaginatedUsers(page: number, limit: number): Promise<any> {
+    
+    const users = await UserModel.getUsersByPage(page, limit);
+    const totalUsers = await UserModel.getTotalUsersCount();
+    const totalPages = Math.ceil(totalUsers / limit);
+
+    return {
+      page,
+      limit,
+      totalPages,
+      totalUsers,
+      users,
+    };
+  }
+  async getAllUsersWithCounts(): Promise<any> {
+    const users = await UserModel.getAllUsers();
+
+    const totalUsers = users.length;
+    const verifiedUsers = users.filter((user: any) => user.verified).length;
+
+    return {
+      totalUsers,
+      verifiedUsers,
+      users,
+    };
   }
 
   async getTopUsersByLoginFrequency(): Promise<any> {
     const sql = `
-      SELECT user_id, COUNT(*) AS login_count 
-      FROM user_logins 
-      GROUP BY user_id 
-      ORDER BY login_count DESC 
+      SELECT * FROM users
+      ORDER BY logins DESC
       LIMIT 3
     `;
     return UserModel.query(sql);
   }
 
   async getInactiveUsers(duration: "hour" | "month"): Promise<any> {
-    // Implement logic to fetch inactive users
     const sql = `
       SELECT * FROM users 
       WHERE last_login < NOW() - INTERVAL 1 ${duration.toUpperCase()}
@@ -51,6 +71,9 @@ class UserService {
     );
     return result.total;
   }
-}
 
+  async verifyUser(email: string): Promise<boolean> {
+    return UserModel.verifyUser(email);
+  }
+}
 export default new UserService();

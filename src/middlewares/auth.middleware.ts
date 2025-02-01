@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import JWT from "../utils/jwt";
+import dotenv from "dotenv";
+dotenv.config();
 
 const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const token = req.header("Authorization")?.replace("Bearer ", "");
@@ -13,6 +15,7 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     (req as any).user = decoded;
     next();
   } catch (error) {
+    console.log(error);
     res.status(400).json({ message: "Invalid token." });
   }
 };

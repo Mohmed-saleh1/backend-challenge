@@ -4,17 +4,18 @@ import authMiddleware from "../middlewares/auth.middleware";
 
 const router = express.Router();
 
-router.get("/:id", authMiddleware, UserController.getUser);
-router.put("/:id", authMiddleware, UserController.updateUser);
-router.delete("/:id", authMiddleware, UserController.deleteUser);
-router.get("/", authMiddleware, UserController.getAllUsers);
-router.get("/top-users", authMiddleware, UserController.getTopUsers);
-router.get("/inactive-users", authMiddleware, UserController.getInactiveUsers);
-router.get("/total-users", authMiddleware, UserController.getTotalUsers);
+router.get("/", UserController.getPaginatedUsers);
+router.get("/top-users", UserController.getTopUsers);
+router.get("/inactive-users", UserController.getInactiveUsers);
+router.get("/total-users", UserController.getTotalUsers);
+router.post("/verify", UserController.verifyUser);
 router.get(
   "/total-verified-users",
-  authMiddleware,
+
   UserController.getTotalVerifiedUsers
 );
+router.get("/:id", UserController.getUser);
+router.put("/:id", UserController.updateUser);
+router.delete("/:id", UserController.deleteUser);
 
 export default router;

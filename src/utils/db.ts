@@ -18,7 +18,6 @@ class Database {
       queueLimit: 0,
     });
 
-    // Test the connection on initialization
     this.testConnection();
   }
 

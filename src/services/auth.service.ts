@@ -8,12 +8,31 @@ class AuthService {
     return UserModel.createUser(name, email, hashedPassword);
   }
 
-  async login(email: string, password: string): Promise<string | null> {
+  async login(
+    email: string,
+    password: string
+  ): Promise<string | { token: string; user: any }> {
     const [user] = await UserModel.getUserByEmail(email);
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      return null;
+
+    if (!user) {
+      return "invalid credentials";
     }
-    return JWT.generateToken({ id: user.id, email: user.email });
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return "invalid credentials";
+    }
+
+    if (!user.verified) {
+      return "Please verify your email first";
+    }
+    const userWithoutPassword = { ...user };
+    delete userWithoutPassword.password;
+    await UserModel.updateLastLogin(user.id);
+    await UserModel.updateLoginCount(user.id);
+    const token = JWT.generateToken({ id: user.id, email: user.email });
+
+    return { token, user: userWithoutPassword };
   }
 }
 

@@ -17,8 +17,9 @@ export const up = async () => {
       name VARCHAR(255) NOT NULL,
       email VARCHAR(255) NOT NULL UNIQUE,
       password VARCHAR(255) NOT NULL,
-      loginNo INT DEFAULT NOT NULL,
-      last_login_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      logins INT DEFAULT 0,
+      verified BOOLEAN DEFAULT FALSE,
+      last_login TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     )
@@ -35,7 +36,6 @@ export const down = async () => {
     database: DB_NAME,
   });
 
-  // Drop the users table
   await connection.execute("DROP TABLE IF EXISTS users");
   console.log("Users table dropped");
 };
