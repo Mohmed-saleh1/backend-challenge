@@ -87,6 +87,7 @@ class UserModel {
   async getTotalUsersCount(): Promise<number> {
     const sql = "SELECT COUNT(*) AS total FROM users";
     const [result] = await db.query(sql);
+    console.log("result from totla", result);
     return result.total;
   }
 
@@ -107,15 +108,25 @@ class UserModel {
     let users = [];
     const dateFormat = "YYYY-MM-DD";
 
+    console.log("Limit:", limit);
+    console.log("Offset:", offset);
+
     if (startDate && endDate) {
       const countQuery = `
         SELECT COUNT(*) AS total 
         FROM users 
-        WHERE registered_at BETWEEN ? AND ?
+        WHERE created_at BETWEEN ? AND ?
       `;
       try {
         const [countResult] = await db.query(countQuery, [startDate, endDate]);
-        total = countResult[0].total || 0;
+        console.log("Count Result:", countResult);
+        if (countResult && countResult[0]) {
+          total = countResult[0].total || 0;
+          console.log("Total from result:", total);
+        } else {
+          console.error("Count result is empty or undefined");
+          total = 0;
+        }
       } catch (error) {
         console.error("Error calculating total:", error);
         throw error;
@@ -124,14 +135,14 @@ class UserModel {
       total = await this.getTotalUsersCount();
     }
 
-    let sql;
-    let values;
+    let sql: string;
+    let values: any[];
 
     if (startDate && endDate) {
       sql = `
         SELECT * 
         FROM users 
-        WHERE registered_at BETWEEN ? AND ?
+        WHERE created_at BETWEEN ? AND ?
         LIMIT ? OFFSET ?
       `;
       values = [startDate, endDate, limit, offset];
@@ -139,6 +150,9 @@ class UserModel {
       sql = "SELECT * FROM users LIMIT ? OFFSET ?";
       values = [limit, offset];
     }
+
+    console.log("Executing SQL query:", sql);
+    console.log("With values:", values);
 
     try {
       const [rows] = await db.query(sql, values);

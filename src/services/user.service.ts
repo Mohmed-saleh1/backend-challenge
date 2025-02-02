@@ -14,25 +14,9 @@ class UserService {
     return UserModel.deleteUser(id);
   }
 
-  async getPaginatedUsers(
-    page: number,
-    limit: number,
-    startDate?: string,
-    endDate?: string
-  ): Promise<any> {
-    const response = await UserModel.getUsersByPageAndFilter(
-      page,
-      limit,
-      startDate,
-      endDate
-    );
-    return {
-      ...response,
-      users: response.users.map((user) => ({
-        ...user,
-        registered_at: user.registered_at.toISOString().split("T")[0],
-      })),
-    };
+  async getPaginatedUsers(page: number, limit: number): Promise<any> {
+    const response = await UserModel.getUsersByPage(page, limit);
+    return response;
   }
   async getAllUsersWithCounts(): Promise<any> {
     const users = await UserModel.getAllUsers();

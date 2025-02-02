@@ -64,45 +64,82 @@ class UserController {
     console.log(dateString);
     const regex = /^\d{4}-\d{2}-\d{2}$/;
     console.log(regex);
-    if (!regex.test(dateString)) return false;
-    const date = new Date(dateString);
-    return date.toISOString().startsWith(dateString);
+
+    // First, check if the date string matches the expected format (YYYY-MM-DD)
+    if (!regex.test(dateString)) {
+      // If not, attempt to reformat the date
+      const [month, day, year] = dateString.split("-");
+
+      // If the length of year is 4, proceed to zero-pad
+      if (year.length === 4) {
+        const paddedMonth = month.padStart(2, "0");
+        const paddedDay = day.padStart(2, "0");
+        dateString = `${year}-${paddedMonth}-${paddedDay}`;
+      } else {
+        return false;
+      }
+    }
+
+    // Parse the reformat date string
+    const parsedDate = Date.parse(dateString);
+    if (isNaN(parsedDate)) return false;
+
+    // Create a new Date object from the parsed date
+    const date = new Date(parsedDate);
+    const formattedDate = date.toISOString().split("T")[0]; // 'YYYY-MM-DD'
+
+    // Return true if the formatted date matches the dateString
+    return formattedDate === dateString;
   }
+
+  // async getPaginatedUsersWithDate(req: Request, res: Response): Promise<any> {
+  //   const page = parseInt(req.query.page as string) || 1;
+  //   const limit = parseInt(req.query.limit as string) || 10;
+  //   const startDate = req.query.start_date?.toString();
+  //   const endDate = req.query.end_date?.toString();
+
+  //   const validations: { [key: string]: string } = {};
+
+  //   // if (startDate) {
+  //   //   if (!(await this.isValidDate(startDate))) {
+  //   //     validations.start_date = "Invalid start date format (YYYY-MM-DD)";
+  //   //   }
+  //   // }
+
+  //   // if (endDate) {
+  //   //   if (!(await this.isValidDate(endDate))) {
+  //   //     validations.end_date = "Invalid end date format (YYYY-MM-DD)";
+  //   //   }
+  //   // }
+
+  //   if (Object.keys(validations).length > 0) {
+  //     return res.status(400).json({ errors: validations });
+  //   }
+
+  //   try {
+  //     const result = await UserService.getPaginatedUsers(
+  //       page,
+  //       limit,
+  //       startDate,
+  //       endDate
+  //     );
+  //     res.json(result);
+  //   } catch (error) {
+  //     console.error("Error retrieving users:", error);
+  //     res.status(500).json({ message: error });
+  //   }
+  // }
+
   async getPaginatedUsers(req: Request, res: Response): Promise<any> {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
-    const startDate = req.query.start_date?.toString();
-    const endDate = req.query.end_date?.toString();
-
-    const validations: { [key: string]: string } = {};
-
-    if (startDate) {
-      if (!(await this.isValidDate(startDate))) {
-        validations.start_date = "Invalid start date format (YYYY-MM-DD)";
-      }
-    }
-
-    if (endDate) {
-      if (!(await this.isValidDate(endDate))) {
-        validations.end_date = "Invalid end date format (YYYY-MM-DD)";
-      }
-    }
-
-    if (Object.keys(validations).length > 0) {
-      return res.status(400).json({ errors: validations });
-    }
 
     try {
-      const result = await UserService.getPaginatedUsers(
-        page,
-        limit,
-        startDate,
-        endDate
-      );
+      const result = await UserService.getPaginatedUsers(page, limit);
       res.json(result);
     } catch (error) {
       console.error("Error retrieving users:", error);
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json({ message: error });
     }
   }
 }

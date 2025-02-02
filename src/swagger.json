@@ -117,26 +117,6 @@
               "minimum": 1,
               "maximum": 100
             }
-          },
-          {
-            "name": "start_date",
-            "in": "query",
-            "description": "Start date (YYYY-MM-DD)",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "date"
-            }
-          },
-          {
-            "name": "end_date",
-            "in": "query",
-            "description": "End date (YYYY-MM-DD)",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "date"
-            }
           }
         ],
         "responses": {
