@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node dist/server.js",
     "build": "tsc",
-    "dev": "nodemon src/server.ts"
+    "dev": "nodemon src/server.ts",
+    "migration:up": " npx ts-node src/migrate.ts up",
+    "migration:down": " npx ts-node src/migrate.ts down"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

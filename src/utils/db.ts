@@ -1,7 +1,5 @@
 import mysql from "mysql2/promise";
 import dotenv from "dotenv";
-
-// Load environment variables from the .env file
 dotenv.config();
 
 class Database {
@@ -21,7 +19,6 @@ class Database {
     this.testConnection();
   }
 
-  // Test the MySQL connection
   private async testConnection() {
     try {
       console.log("Attempting to connect to the database...");

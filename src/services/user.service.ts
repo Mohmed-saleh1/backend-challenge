@@ -14,18 +14,24 @@ class UserService {
     return UserModel.deleteUser(id);
   }
 
-  async getPaginatedUsers(page: number, limit: number): Promise<any> {
-    
-    const users = await UserModel.getUsersByPage(page, limit);
-    const totalUsers = await UserModel.getTotalUsersCount();
-    const totalPages = Math.ceil(totalUsers / limit);
-
-    return {
+  async getPaginatedUsers(
+    page: number,
+    limit: number,
+    startDate?: string,
+    endDate?: string
+  ): Promise<any> {
+    const response = await UserModel.getUsersByPageAndFilter(
       page,
       limit,
-      totalPages,
-      totalUsers,
-      users,
+      startDate,
+      endDate
+    );
+    return {
+      ...response,
+      users: response.users.map((user) => ({
+        ...user,
+        registered_at: user.registered_at.toISOString().split("T")[0],
+      })),
     };
   }
   async getAllUsersWithCounts(): Promise<any> {
@@ -74,6 +80,10 @@ class UserService {
 
   async verifyUser(email: string): Promise<boolean> {
     return UserModel.verifyUser(email);
+  }
+
+  async updateRole(email: string): Promise<any> {
+    return UserModel.updateRole(email);
   }
 }
 export default new UserService();

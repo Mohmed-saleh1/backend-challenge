@@ -10,7 +10,6 @@ export const up = async () => {
     database: DB_NAME,
   });
 
-  // Create users table if not exists
   const createTableQuery = `
     CREATE TABLE IF NOT EXISTS users (
       id INT AUTO_INCREMENT PRIMARY KEY,
@@ -19,6 +18,7 @@ export const up = async () => {
       password VARCHAR(255) NOT NULL,
       logins INT DEFAULT 0,
       verified BOOLEAN DEFAULT FALSE,
+      role VARCHAR(255) NOT NULL DEFAULT 'user',
       last_login TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP

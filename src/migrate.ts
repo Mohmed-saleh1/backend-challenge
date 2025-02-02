@@ -23,7 +23,7 @@ const runMigration = async () => {
 const revertMigration = async () => {
   try {
     await downCreateUsersTable();
-    await downCreateDb(); // Then drop the database
+    await downCreateDb();
     console.log("Migration reverted successfully!");
   } catch (err) {
     console.error("Error reverting migration:", err);

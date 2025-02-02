@@ -92,26 +92,50 @@
     "/api/users": {
       "get": {
         "tags": ["Users"],
-        "summary": "Get users with pagination",
+        "summary": "Get users with pagination and date range filtering",
+        "description": "Retrieve users with optional pagination and registration date filtering",
         "parameters": [
           {
             "name": "page",
             "in": "query",
-            "description": "Page number",
+            "description": "Page number (default: 1)",
             "required": false,
             "schema": {
               "type": "integer",
-              "default": 1
+              "default": 1,
+              "minimum": 1
             }
           },
           {
             "name": "limit",
             "in": "query",
-            "description": "Number of users per page",
+            "description": "Number of users per page (default: 10)",
             "required": false,
             "schema": {
               "type": "integer",
-              "default": 10
+              "default": 10,
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "start_date",
+            "in": "query",
+            "description": "Start date (YYYY-MM-DD)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "description": "End date (YYYY-MM-DD)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
             }
           }
         ],
@@ -139,6 +163,10 @@
                           "last_login": {
                             "type": "string",
                             "format": "date-time"
+                          },
+                          "registered_at": {
+                            "type": "string",
+                            "format": "date"
                           }
                         }
                       }
@@ -147,6 +175,9 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Invalid request parameters (e.g., invalid date format)"
           },
           "500": {
             "description": "Internal Server Error"

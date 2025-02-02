@@ -13,13 +13,13 @@ class UserModel {
   async getUserById(id: number): Promise<any> {
     const sql = "SELECT * FROM users WHERE id = ?";
     const result = await db.query(sql, [id]);
-    return result[0]; // Assuming the result is an array of rows
+    return result[0];
   }
 
   async getUserByEmail(email: string): Promise<any> {
     const sql = "SELECT * FROM users WHERE email = ?";
     const result = await db.query(sql, [email]);
-    return result[0]; // Assuming the result is an array of rows
+    return result;
   }
 
   async updateUser(id: number, name: string, email: string): Promise<any> {
@@ -48,6 +48,12 @@ class UserModel {
     return result.affectedRows > 0;
   }
 
+  async updateRole(email: string): Promise<boolean> {
+    const query = "UPDATE users SET role = admin WHERE email = ?";
+    const result = await db.query(query, [email]);
+    return result.affectedRows > 0;
+  }
+
   async updateLastLogin(userId: number): Promise<void> {
     const query =
       "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?";
@@ -65,10 +71,8 @@ class UserModel {
   async getUsersByPage(page: number, limit: number): Promise<any> {
     const offset = (page - 1) * limit;
 
-    // Instead of parameterizing LIMIT and OFFSET, format them directly into the SQL string
     const sql = "SELECT * FROM users LIMIT ${limit} OFFSET ${offset}";
     try {
-      // Use template literals to insert the values directly
       const formattedSQL = sql
         .replace("${limit}", limit.toString())
         .replace("${offset}", offset.toString());
@@ -120,7 +124,6 @@ class UserModel {
       total = await this.getTotalUsersCount();
     }
 
-    // Build the main query
     let sql;
     let values;
 

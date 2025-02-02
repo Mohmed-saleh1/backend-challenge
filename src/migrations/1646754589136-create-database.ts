@@ -13,7 +13,6 @@ export const up = async () => {
     password: process.env.DB_PASSWORD,
   });
 
-  // Create database if not exists
   await connection.execute(`CREATE DATABASE IF NOT EXISTS ${DB_NAME}`);
   console.log(`Database "${DB_NAME}" created or already exists`);
 };
@@ -25,7 +24,6 @@ export const down = async () => {
     password: process.env.DB_PASSWORD,
   });
 
-  // Drop the database
   await connection.execute(`DROP DATABASE IF EXISTS ${DB_NAME}`);
   console.log(`Database "${DB_NAME}" dropped`);
 };
